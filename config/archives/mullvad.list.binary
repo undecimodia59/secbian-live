@@ -1,1 +1,1 @@
-deb [signed-by=/usr/share/keyrings/mullvad-keyring.asc arch=amd64] https://repository.mullvad.net/deb/stable stable main
+deb [signed-by=/etc/apt/trusted.gpg.d/mullvad.key.chroot.asc arch=amd64] https://repository.mullvad.net/deb/stable stable main
