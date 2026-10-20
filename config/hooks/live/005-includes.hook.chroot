@@ -1,0 +1,41 @@
+#!/bin/sh
+set -e
+
+# The live-build include copy stage (chroot_includes_after_packages) is skipped
+# when its stage marker (.build/chroot_includes_after_packages) survives a
+# chroot rebuild - which silently leaves the image without any of our
+# configuration (Mullvad keyring, USBGuard policy, journald, skel, ...).
+#
+# During the hook stage live-build bind-mounts the build config read-only into
+# the chroot at /live-build/config, so we can (re)apply the includes here and
+# then verify that everything actually landed.
+
+_SRC="/live-build/config/includes.chroot_after_packages"
+[ -d "${_SRC}" ] || _SRC="/live-build/config/includes.chroot"
+
+if [ -d "${_SRC}" ]
+then
+	cp -a "${_SRC}/." /
+fi
+
+for _FILE in \
+	/usr/share/keyrings/mullvad-keyring.asc \
+	/etc/lightdm/lightdm.conf \
+	/etc/NetworkManager/conf.d/00-macrandomize.conf \
+	/etc/skel/.config/i3/config \
+	/etc/skel/.config/i3status/config \
+	/etc/sysctl.d/99-hardening.conf \
+	/etc/systemd/journald.conf.d/volatile.conf \
+	/etc/systemd/system/random-hostname.service \
+	/etc/systemd/system/multi-user.target.wants/random-hostname.service \
+	/etc/usbguard/rules.conf \
+	/usr/lib/live/config-hooks/1000-secbian-password
+do
+	if [ ! -e "${_FILE}" ]
+	then
+		echo "ERROR: include missing from the image: ${_FILE}" >&2
+		echo "       The include copy stage was skipped - rebuild with:" >&2
+		echo "         lb clean --stage --chroot && lb config && lb build" >&2
+		exit 1
+	fi
+done
