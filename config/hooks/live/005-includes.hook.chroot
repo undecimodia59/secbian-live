@@ -20,7 +20,7 @@ fi
 
 for _FILE in \
 	/usr/share/keyrings/mullvad-keyring.asc \
-	/etc/lightdm/lightdm.conf \
+	/etc/lightdm/lightdm.conf.d/99-secbian.conf \
 	/etc/NetworkManager/conf.d/00-macrandomize.conf \
 	/etc/skel/.config/i3/config \
 	/etc/skel/.config/i3status/config \
