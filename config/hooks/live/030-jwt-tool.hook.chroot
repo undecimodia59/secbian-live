@@ -6,7 +6,7 @@ JWT_TOOL_TAG="v2.3.0"
 JWT_TOOL_COMMIT="3bc7407cf2222d6a821dcc19c776e5a1b1cb9a9b"
 
 if [ ! -d /opt/jwt_tool ]; then
-	git clone --quiet --depth 1 --branch "${JWT_TOOL_TAG}" \
+	git -c advice.detachedHead=false clone --quiet --depth 1 --branch "${JWT_TOOL_TAG}" \
 		https://github.com/ticarpi/jwt_tool.git /opt/jwt_tool
 fi
 
@@ -18,10 +18,11 @@ if [ "$(git rev-parse HEAD)" != "${JWT_TOOL_COMMIT}" ]; then
 	exit 1
 fi
 
-# Dependencies pinned (requirements.txt in the tag carries no version bounds)
+# Dependencies pinned (requirements.txt in the tag carries no version bounds).
+# Note: the standalone "cprint" package is not used - jwt_tool imports
+# cprint from termcolor - and it is a py2-era sdist that needs setuptools.
 python3 -m pip install --break-system-packages --no-cache-dir \
 	termcolor==3.3.0 \
-	cprint==1.2.2 \
 	pycryptodomex==3.24.1 \
 	requests==2.34.2 \
 	ratelimit==2.2.1

@@ -12,6 +12,11 @@ systemctl enable apparmor || true
 # Tor: installed but manual start only (sudo systemctl start tor)
 systemctl disable tor.service || true
 
-# Disable non-important services
-systemctl disable bluetooth.service || true
-systemctl disable avahi-daemon.service || true
+# Disable non-important services (only when the unit is actually present)
+for _UNIT in bluetooth.service avahi-daemon.service
+do
+	if [ -e "/usr/lib/systemd/system/${_UNIT}" ] || [ -e "/lib/systemd/system/${_UNIT}" ]
+	then
+		systemctl disable "${_UNIT}" || true
+	fi
+done
