@@ -1,0 +1,15 @@
+mullvad-browser
+mullvad-vpn
+tor
+torsocks
+nyx
+obfs4proxy
+firejail
+apparmor
+apparmor-utils
+ufw
+mat2
+metadata-cleaner
+cryptsetup
+cryptsetup-initramfs
+veracrypt

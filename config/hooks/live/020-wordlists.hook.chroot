@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+mkdir -p /usr/share/wordlists
+
+# rockyou 
+if [ ! -f /usr/share/wordlists/rockyou.txt ]; then
+    wget -q -O /usr/share/wordlists/rockyou.txt.gz \
+        https://github.com/brannondorsey/naive-hashcat/releases/download/data/rockyou.txt
+fi
+
+# Rights
+chown -R root:root /usr/share/wordlists
+chmod -R a+r /usr/share/wordlists

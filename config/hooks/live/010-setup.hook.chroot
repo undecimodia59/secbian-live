@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+# UFW basic
+ufw default deny incoming
+ufw default allow outgoing
+ufw enable || true
+
+# AppArmor
+systemctl enable apparmor || true
+
+# Disable non-important services
+systemctl disable bluetooth.service || true
+systemctl disable avahi-daemon.service || true
