@@ -21,7 +21,7 @@ LB_DISTRIBUTION_BINARY="trixie"
 # Select parent distribution to use in the final image
 LB_PARENT_DISTRIBUTION_BINARY="trixie"
 
-# Select parent distribution for debian-installer to use
+# Select parent distribution to use in the debian-installer
 LB_PARENT_DEBIAN_INSTALLER_DISTRIBUTION="trixie"
 
 # Select archive areas to use
