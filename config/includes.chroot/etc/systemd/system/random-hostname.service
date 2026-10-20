@@ -1,0 +1,13 @@
+[Unit]
+Description=Randomize hostname
+DefaultDependencies=no
+Before=network-pre.target
+Wants=network-pre.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'NEWHOST="sec-$(tr -dc a-z0-9 </dev/urandom | head -c6)"; hostnamectl set-hostname "$NEWHOST"; sed -i "s/127.0.1.1.*/127.0.1.1\t$NEWHOST/" /etc/hosts || echo "127.0.1.1 $NEWHOST" >> /etc/hosts'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

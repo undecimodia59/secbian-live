@@ -1,0 +1,8 @@
+# live-build build state and outputs
+.build/
+cache/
+chroot/
+binary/
+
+# local lb overrides are per-machine scaffolding (recreated by `lb config`)
+# auto/ and local/ are empty scaffolding dirs; track them only if you add content

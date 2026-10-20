@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+
+apt-get update
+apt-get install -y python3-pip git
+
+if [ ! -d /opt/jwt_tool ]; then
+    git clone --depth 1 https://github.com/ticarpi/jwt_tool.git /opt/jwt_tool
+fi
+
+cd /opt/jwt_tool
+python3 -m pip install --break-system-packages -r requirements.txt || \
+python3 -m pip install termcolor cprint pycryptodomex requests
+
+chmod +x /opt/jwt_tool/jwt_tool.py
+ln -sf /opt/jwt_tool/jwt_tool.py /usr/local/bin/jwt_tool

@@ -1,0 +1,41 @@
+set $mod Mod4
+
+# Font
+font pango:monospace 14
+
+# Start i3status
+bar {
+    status_command i3status
+}
+
+# Keybindings
+bindsym $mod+Return exec kitty
+bindsym $mod+d exec rofi -show drun
+bindsym $mod+Shift+q kill
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Exit?' -B 'Yes' 'i3-msg exit'"
+
+# Focus
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+# Move
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# Workspaces
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+
+# Floating
+bindsym $mod+Shift+space floating toggle
