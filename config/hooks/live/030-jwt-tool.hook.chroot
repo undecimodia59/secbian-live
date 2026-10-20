@@ -1,16 +1,30 @@
 #!/bin/sh
 set -e
 
-apt-get update
-apt-get install -y python3-pip git
+# jwt_tool pinned to release v2.3.0 (lightweight tag -> commit)
+JWT_TOOL_TAG="v2.3.0"
+JWT_TOOL_COMMIT="3bc7407cf2222d6a821dcc19c776e5a1b1cb9a9b"
 
 if [ ! -d /opt/jwt_tool ]; then
-    git clone --depth 1 https://github.com/ticarpi/jwt_tool.git /opt/jwt_tool
+	git clone --quiet --depth 1 --branch "${JWT_TOOL_TAG}" \
+		https://github.com/ticarpi/jwt_tool.git /opt/jwt_tool
 fi
 
 cd /opt/jwt_tool
-python3 -m pip install --break-system-packages -r requirements.txt || \
-python3 -m pip install termcolor cprint pycryptodomex requests
 
-chmod +x /opt/jwt_tool/jwt_tool.py
+# Verify the clone is exactly the pinned commit
+if [ "$(git rev-parse HEAD)" != "${JWT_TOOL_COMMIT}" ]; then
+	echo "jwt_tool: commit mismatch, expected ${JWT_TOOL_COMMIT}" >&2
+	exit 1
+fi
+
+# Dependencies pinned (requirements.txt in the tag carries no version bounds)
+python3 -m pip install --break-system-packages --no-cache-dir \
+	termcolor==3.3.0 \
+	cprint==1.2.2 \
+	pycryptodomex==3.24.1 \
+	requests==2.34.2 \
+	ratelimit==2.2.1
+
+chmod 755 /opt/jwt_tool/jwt_tool.py
 ln -sf /opt/jwt_tool/jwt_tool.py /usr/local/bin/jwt_tool

@@ -10,7 +10,7 @@ LB_BINARY_FILESYSTEM="fat32"
 LB_APT_INDICES="false"
 
 # Set boot parameters
-LB_BOOTAPPEND_LIVE="boot=live components persistence username=secbian hostname=secbian"
+LB_BOOTAPPEND_LIVE="boot=live components username=secbian hostname=secbian live-config.user-default-groups=audio,cdrom,dip,floppy,video,plugdev,netdev,powerdev,scanner,bluetooth,debian-tor,dialout,wireshark live-config.hooks=filesystem apparmor=1 security=apparmor slab_nomerge init_on_alloc=1 init_on_free=1 page_alloc.shuffle=1 vsyscall=none lockdown=integrity"
 
 # Set boot parameters
 LB_BOOTAPPEND_INSTALL=""
@@ -62,7 +62,7 @@ LB_DEBIAN_INSTALLER_PRESEEDFILE=""
 LB_DEBIAN_INSTALLER_GUI="true"
 
 # Set hdd label
-LB_HDD_LABEL="DEBIAN_LIVE"
+LB_HDD_LABEL="SECBIAN_LV"
 
 # Set hdd filesystem size
 LB_HDD_SIZE="auto"
@@ -71,22 +71,22 @@ LB_HDD_SIZE="auto"
 LB_HDD_PARTITION_START=""
 
 # Set iso author
-LB_ISO_APPLICATION="Debian Live"
+LB_ISO_APPLICATION="Secbian Live"
 
 # Set iso preparer
 LB_ISO_PREPARER="live-build @LB_VERSION@; https://salsa.debian.org/live-team/live-build"
 
 # Set iso publisher
-LB_ISO_PUBLISHER="Debian Live project; https://wiki.debian.org/DebianLive; debian-live@lists.debian.org"
+LB_ISO_PUBLISHER="Secbian; https://github.com/undecimodia59/secbian-live"
 
 # Set iso volume (max 32 chars)
-LB_ISO_VOLUME="Debian trixie @ISOVOLUME_TS@"
+LB_ISO_VOLUME="Secbian trixie @ISOVOLUME_TS@"
 
 # Set jffs2 eraseblock size
 LB_JFFS2_ERASEBLOCK=""
 
 # Set memtest
-LB_MEMTEST="none"
+LB_MEMTEST="memtest86+"
 
 # Set loadlin
 LB_LOADLIN="false"

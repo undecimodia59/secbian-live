@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+
+# nuclei pinned to v3.11.1 (static linux/amd64 build, sha256-verified)
+NUCLEI_VERSION="3.11.1"
+NUCLEI_URL="https://github.com/projectdiscovery/nuclei/releases/download/v${NUCLEI_VERSION}/nuclei_${NUCLEI_VERSION}_linux_amd64.zip"
+NUCLEI_SHA256="ea63d4ae232808cd7c6bc00d0142428e231fab59dae01042246097d195835ab6"
+
+if [ ! -x /usr/local/bin/nuclei ]; then
+	wget -q -O /tmp/nuclei.zip "${NUCLEI_URL}"
+	echo "${NUCLEI_SHA256}  /tmp/nuclei.zip" | sha256sum -c -
+	unzip -o -j /tmp/nuclei.zip nuclei -d /usr/local/bin
+	rm -f /tmp/nuclei.zip
+fi
+
+chmod 755 /usr/local/bin/nuclei
+
+# Smoke test: print the pinned version
+/usr/local/bin/nuclei -version 2>&1 | head -1

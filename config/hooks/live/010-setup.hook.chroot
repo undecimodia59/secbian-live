@@ -1,13 +1,16 @@
 #!/bin/sh
 set -e
 
-# UFW basic
+# UFW: deny incoming, allow outgoing
 ufw default deny incoming
 ufw default allow outgoing
 ufw enable || true
 
 # AppArmor
 systemctl enable apparmor || true
+
+# Tor: installed but manual start only (sudo systemctl start tor)
+systemctl disable tor.service || true
 
 # Disable non-important services
 systemctl disable bluetooth.service || true

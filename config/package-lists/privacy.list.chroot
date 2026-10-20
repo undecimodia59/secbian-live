@@ -5,11 +5,14 @@ torsocks
 nyx
 obfs4proxy
 firejail
+firejail-profiles
 apparmor
 apparmor-utils
+apparmor-profiles
+apparmor-profiles-extra
+usbguard
 ufw
 mat2
 metadata-cleaner
 cryptsetup
 cryptsetup-initramfs
-veracrypt

@@ -1,0 +1,20 @@
+#!/bin/sh
+set -e
+
+# volatility3 pinned to 2.28.2 in a dedicated venv, wheel sha256-verified
+VOLATILITY3_VERSION="2.28.2"
+VOLATILITY3_SHA256="0461d6dd71b9ddbaf70c96e079c06efdf174ac65383b3dcf10dd165181fbd3c3"
+
+if [ ! -x /opt/volatility3/bin/vol ]; then
+	python3 -m venv /opt/volatility3
+
+	/opt/volatility3/bin/pip download --no-deps --no-cache-dir \
+		-d /tmp/vol3 "volatility3==${VOLATILITY3_VERSION}"
+	echo "${VOLATILITY3_SHA256}  /tmp/vol3/volatility3-${VOLATILITY3_VERSION}-py3-none-any.whl" | sha256sum -c -
+	/opt/volatility3/bin/pip install --no-cache-dir \
+		/tmp/vol3/volatility3-${VOLATILITY3_VERSION}-py3-none-any.whl
+	rm -rf /tmp/vol3
+fi
+
+ln -sf /opt/volatility3/bin/vol /usr/local/bin/vol
+ln -sf /opt/volatility3/bin/volshell /usr/local/bin/volshell

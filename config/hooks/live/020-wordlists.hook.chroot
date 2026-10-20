@@ -1,12 +1,15 @@
 #!/bin/sh
 set -e
 
+# rockyou.txt - 139,921,497 bytes / 14,344,391 lines, pinned URL + sha256
+ROCKYOU_URL="https://github.com/brannondorsey/naive-hashcat/releases/download/data/rockyou.txt"
+ROCKYOU_SHA256="6dfa76aa0e02303994fd1062d0ac983f0b69ece5474d85a5bba36362e19c1076"
+
 mkdir -p /usr/share/wordlists
 
-# rockyou 
 if [ ! -f /usr/share/wordlists/rockyou.txt ]; then
-    wget -q -O /usr/share/wordlists/rockyou.txt.gz \
-        https://github.com/brannondorsey/naive-hashcat/releases/download/data/rockyou.txt
+	wget -q -O /usr/share/wordlists/rockyou.txt "${ROCKYOU_URL}"
+	echo "${ROCKYOU_SHA256}  /usr/share/wordlists/rockyou.txt" | sha256sum -c -
 fi
 
 # Rights

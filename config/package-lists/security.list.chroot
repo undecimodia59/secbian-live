@@ -15,8 +15,6 @@ dsniff
 foremost
 testdisk
 binwalk
-volatility
 sleuthkit
 chkrootkit
 rkhunter
-nuclei
