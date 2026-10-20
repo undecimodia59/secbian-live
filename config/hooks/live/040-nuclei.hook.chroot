@@ -16,4 +16,4 @@ fi
 chmod 755 /usr/local/bin/nuclei
 
 # Smoke test: print the pinned version
-/usr/local/bin/nuclei -version 2>&1 | head -1
+/usr/local/bin/nuclei -version

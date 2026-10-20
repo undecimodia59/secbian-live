@@ -10,13 +10,28 @@ then
 	exit 1
 fi
 
-# UFW: deny incoming, allow outgoing
-ufw default deny incoming
-ufw default allow outgoing
-ufw enable || true
+# Configure the image's firewall offline.
+# A plain chroot shares the builder's network namespace.
+test -f /etc/default/ufw
+test -f /etc/ufw/ufw.conf
+
+sed -i \
+    -e 's/^DEFAULT_INPUT_POLICY=.*/DEFAULT_INPUT_POLICY="DROP"/' \
+    -e 's/^DEFAULT_OUTPUT_POLICY=.*/DEFAULT_OUTPUT_POLICY="ACCEPT"/' \
+    -e 's/^DEFAULT_FORWARD_POLICY=.*/DEFAULT_FORWARD_POLICY="DROP"/' \
+    /etc/default/ufw
+
+sed -i 's/^ENABLED=.*/ENABLED=yes/' /etc/ufw/ufw.conf
+
+grep -qx 'DEFAULT_INPUT_POLICY="DROP"' /etc/default/ufw
+grep -qx 'DEFAULT_OUTPUT_POLICY="ACCEPT"' /etc/default/ufw
+grep -qx 'DEFAULT_FORWARD_POLICY="DROP"' /etc/default/ufw
+grep -qx 'ENABLED=yes' /etc/ufw/ufw.conf
+
+systemctl enable ufw.service
 
 # AppArmor
-systemctl enable apparmor || true
+systemctl enable apparmor.service
 
 # Tor: installed but manual start only (sudo systemctl start tor)
 systemctl disable tor.service || true

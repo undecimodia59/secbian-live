@@ -1,19 +1,18 @@
 # secbian-live
 
-Amnesic, security/privacy-focused Debian Live (trixie, i3) built with live-build.
-Tails-like hygiene, Kali-like toolset. Nothing persists unless you set it up.
+Amnesic, hardened, security/privacy-focused Debian Live (trixie, i3) built with live-build.
 
 ## Build (on Debian 13 trixie)
 
 ```sh
 sudo apt install -y live-build
-lb build        # -> secbian.amd64.iso + SHA256SUMS
-lb clean        # before a rebuild
+sudo lb config
+sudo lb build
 ```
 
 All other build tools (debootstrap, xorriso, mtools, syslinux/grub bits,
 memtest86+, ...) are pulled automatically into the build chroot
-(`LB_BUILD_WITH_CHOUT="true"`).
+(`LB_BUILD_WITH_CHROOT="true"`).
 
 ## Hardened by default
 
@@ -39,7 +38,7 @@ memtest86+, ...) are pulled automatically into the build chroot
 
 - Live user `secbian`, password `secbian`, passwordless sudo; root locked.
 - Mullvad apt repo key is scoped (`signed-by`), not globally trusted.
-- VeraCrypt volumes: `cryptsetup open --type veracrypt <container> <name>`.
+- VeraCrypt volumes: `sudo cryptsetup open --type tcrypt <container> <name>`.
 - Build-time downloads are pinned: rockyou (sha256), jwt_tool (commit), nuclei
   (sha256), volatility3 (sha256). nuclei templates / volatility3 symbol tables
   download on first use.

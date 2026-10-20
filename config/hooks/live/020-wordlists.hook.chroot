@@ -7,9 +7,17 @@ ROCKYOU_SHA256="6dfa76aa0e02303994fd1062d0ac983f0b69ece5474d85a5bba36362e19c1076
 
 mkdir -p /usr/share/wordlists
 
-if [ ! -f /usr/share/wordlists/rockyou.txt ]; then
-	wget -q -O /usr/share/wordlists/rockyou.txt "${ROCKYOU_URL}"
-	echo "${ROCKYOU_SHA256}  /usr/share/wordlists/rockyou.txt" | sha256sum -c -
+if ! echo "${ROCKYOU_SHA256}  /usr/share/wordlists/rockyou.txt" |
+    sha256sum -c - 2>/dev/null
+then
+    ROCKYOU_TMP=$(mktemp /usr/share/wordlists/.rockyou.XXXXXX)
+    trap 'rm -f "${ROCKYOU_TMP}"' EXIT HUP INT TERM
+
+    wget -q -O "${ROCKYOU_TMP}" "${ROCKYOU_URL}"
+    echo "${ROCKYOU_SHA256}  ${ROCKYOU_TMP}" | sha256sum -c -
+
+    mv -f "${ROCKYOU_TMP}" /usr/share/wordlists/rockyou.txt
+    trap - EXIT HUP INT TERM
 fi
 
 # Rights

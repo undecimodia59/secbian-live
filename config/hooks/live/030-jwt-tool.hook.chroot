@@ -23,12 +23,8 @@ fi
 # namespace jwt_tool imports). No PyPI install needed, so no sdist builds.
 if ! python3 -c "import requests, termcolor, ratelimit; from termcolor import cprint; from Cryptodome.Signature import PKCS1_v1_5" 2>/dev/null
 then
-	echo "jwt_tool: Debian python packages incomplete, falling back to pinned PyPI wheels..." >&2
-	python3 -m pip install --break-system-packages --no-cache-dir \
-		termcolor==3.3.0 \
-		pycryptodomex==3.24.1 \
-		requests==2.34.2 \
-		ratelimit==2.2.1
+	echo "jwt_tool: required Debian Python packages are missing; fix useful.list.chroot and rebuild." >&2
+    	exit 1
 fi
 
 chmod 755 /opt/jwt_tool/jwt_tool.py
