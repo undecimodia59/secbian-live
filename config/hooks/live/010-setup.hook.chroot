@@ -1,6 +1,15 @@
 #!/bin/sh
 set -e
 
+# Fail fast if the chroot package install stage was skipped (e.g. a stale
+# live-build stage marker left an empty chroot behind).
+if [ ! -x /usr/sbin/ufw ] || [ ! -x /usr/bin/i3 ] || [ ! -x /usr/sbin/lightdm ]
+then
+	echo "ERROR: expected packages are missing from the chroot - the package install stage was skipped." >&2
+	echo "       Fix: sudo lb clean --stage --chroot && lb config && sudo lb build" >&2
+	exit 1
+fi
+
 # UFW: deny incoming, allow outgoing
 ufw default deny incoming
 ufw default allow outgoing

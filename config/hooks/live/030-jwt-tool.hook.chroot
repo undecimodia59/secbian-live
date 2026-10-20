@@ -18,14 +18,18 @@ if [ "$(git rev-parse HEAD)" != "${JWT_TOOL_COMMIT}" ]; then
 	exit 1
 fi
 
-# Dependencies pinned (requirements.txt in the tag carries no version bounds).
-# Note: the standalone "cprint" package is not used - jwt_tool imports
-# cprint from termcolor - and it is a py2-era sdist that needs setuptools.
-python3 -m pip install --break-system-packages --no-cache-dir \
-	termcolor==3.3.0 \
-	pycryptodomex==3.24.1 \
-	requests==2.34.2 \
-	ratelimit==2.2.1
+# Dependencies come from the Debian archive (python3-termcolor, python3-requests,
+# python3-ratelimit, python3-pycryptodome - the latter provides the Cryptodome
+# namespace jwt_tool imports). No PyPI install needed, so no sdist builds.
+if ! python3 -c "import requests, termcolor, ratelimit; from termcolor import cprint; from Cryptodome.Signature import PKCS1_v1_5" 2>/dev/null
+then
+	echo "jwt_tool: Debian python packages incomplete, falling back to pinned PyPI wheels..." >&2
+	python3 -m pip install --break-system-packages --no-cache-dir \
+		termcolor==3.3.0 \
+		pycryptodomex==3.24.1 \
+		requests==2.34.2 \
+		ratelimit==2.2.1
+fi
 
 chmod 755 /opt/jwt_tool/jwt_tool.py
 ln -sf /opt/jwt_tool/jwt_tool.py /usr/local/bin/jwt_tool

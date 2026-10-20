@@ -3,5 +3,11 @@ tmux
 git
 python3-pip
 python3-venv
+python3-setuptools
+python3-wheel
+python3-termcolor
+python3-requests
+python3-ratelimit
+python3-pycryptodome
 build-essential
 unzip
