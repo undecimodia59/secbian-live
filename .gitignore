@@ -11,3 +11,13 @@ chroot.files
 *.iso
 *.img
 SHA256SUMS
+
+# Additional live-build temporary files
+/binary.modified_timestamps
+/binary.sh
+/chroot.installed_tmp_pkgs
+
+# Generated image manifests
+/secbian-*.contents
+/secbian-*.files
+/secbian-*.packages
