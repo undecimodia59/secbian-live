@@ -1,0 +1,81 @@
+configuration {
+    modi: "drun,window,run";
+    font: "DejaVu Sans 14";
+    show-icons: true;
+    icon-theme: "Papirus-Dark";
+    matching: "fuzzy";
+    sort: true;
+    drun-display-format: "{name}";
+    display-drun: "Apps";
+    display-window: "Windows";
+    display-run: "Run";
+}
+
+* {
+    bg: #101923;
+    fg: #e8eef5;
+    muted: #99aabc;
+    accent: #52e0c4;
+    selected: #174c50;
+    background-color: @bg;
+    text-color: @fg;
+    border-color: @accent;
+    font: "DejaVu Sans 11";
+}
+
+window {
+    width: 42%;
+    location: center;
+    anchor: center;
+    border: 2px;
+    border-radius: 8px;
+    padding: 18px;
+}
+mainbox {
+    children: [inputbar, mode-switcher, listview];
+    spacing: 12px;
+}
+inputbar {
+    children: [prompt, entry];
+    spacing: 12px;
+    padding: 8px 6px;
+}
+prompt { text-color: @accent; }
+entry { placeholder: "Search applications..."; }
+mode-switcher { spacing: 6px; }
+button {
+    padding: 7px;
+    text-color: @muted;
+    border-radius: 4px;
+}
+button selected {
+    background-color: @selected;
+    text-color: @accent;
+}
+listview {
+    lines: 8;
+    columns: 1;
+    fixed-height: false;
+    scrollbar: false;
+    spacing: 4px;
+}
+element {
+    padding: 9px;
+    spacing: 10px;
+    border-radius: 4px;
+}
+element-icon {
+    size: 24px;
+    background-color: inherit;
+}
+element-text {
+    vertical-align: 0.5;
+    background-color: inherit;
+    text-color: inherit;
+}
+element normal.normal,
+element alternate.normal { background-color: @bg; }
+element selected.normal {
+    background-color: @selected;
+    text-color: @fg;
+}

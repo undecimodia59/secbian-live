@@ -1,42 +1,38 @@
 general {
+    output_format = "i3bar"
     colors = true
     interval = 5
+    color_good = "#52e0c4"
+    color_degraded = "#e9c46a"
+    color_bad = "#f2778b"
 }
 
-# order += "load"
 order += "memory"
 order += "disk /"
-# order += "ethernet _first_"
-# order += "wireless _first_"
 order += "battery all"
 order += "tztime local"
 
-load {
-    format = "Load: %1min"
-}
-
 memory {
-    format = "RAM: %used / %available"
-    threshold_degraded = "1G"
-    format_degraded = "RAM: %used / %available"
+    format = "RAM %used / %total"
+    threshold_degraded = "10%"
+    format_degraded = "RAM %used / %total"
 }
 
 disk "/" {
-    format = "Disk: %used/%avail"
-}
-
-ethernet _first_ {
-    format_up = "E: %ip"
-    format_down = "E: down"
-}
-
-wireless _first_ {
-    format_up = "W: (%quality) %essid"
-    format_down = "W: down"
+    format = "SSD %used/%total"
+    low_threshold = 10
+    threshold_type = "percentage_avail"
 }
 
 battery all {
-    format = "Bat: %percentage"
+    format = "%status %percentage"
+    format_down = ""
+    status_chr = "AC"
+    status_bat = "BAT"
+    status_unk = "BAT"
+    status_full = "FULL"
+    low_threshold = 15
+    threshold_type = "percentage"
 }
 
 tztime local {

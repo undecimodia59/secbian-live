@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1920" height="1080" viewBox="0 0 1920 1080">
+  <title>Secbian dark desktop wallpaper</title>
+  <rect width="1920" height="1080" fill="#080d17"/>
+  <path d="M1170 0H1920V1080H670Z" fill="#0b1320"/>
+  <path d="M1170 0L670 1080" stroke="#152537" stroke-width="1"/>
+  <g transform="translate(1450 875) scale(.8)" opacity=".22">
+    <path d="M37 22H19V106H37 M91 22H109V106H91"
+          fill="none" stroke="#52e0c4" stroke-width="8"/>
+    <text x="64" y="90" text-anchor="middle" fill="#52e0c4"
+          font-family="DejaVu Sans" font-size="76" font-weight="bold">S</text>
+    <text x="150" y="80" fill="#b0becf" font-family="DejaVu Sans"
+          font-size="32" font-weight="bold" letter-spacing="3">SECBIAN</text>
+  </g>
+</svg>

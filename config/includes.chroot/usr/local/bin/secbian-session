@@ -1,0 +1,20 @@
+#!/bin/sh
+set -eu
+
+choice=$(printf '%s\n' 'Lock' 'Log out' 'Reboot' 'Power off' |
+    rofi -dmenu -i -no-custom -p 'Session') || exit 0
+
+case "$choice" in
+    Lock) exec i3lock -c 080d17 ;;
+    'Log out'|Reboot|'Power off')
+        answer=$(printf '%s\n' 'Cancel' 'Confirm' |
+            rofi -dmenu -i -no-custom -p "$choice?") || exit 0
+        [ "$answer" = Confirm ] || exit 0
+        case "$choice" in
+            'Log out') exec i3-msg exit ;;
+            Reboot) exec systemctl reboot ;;
+            'Power off') exec systemctl poweroff ;;
+        esac
+        ;;
+    *) exit 0 ;;
+esac

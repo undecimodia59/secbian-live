@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+
+# Compile the system defaults after includes have been copied.
+dconf update
+
+# Raster wallpaper works with feh without an SVG image-loader dependency.
+rsvg-convert --width 1920 --height 1080 \
+    /usr/share/secbian/wallpaper.svg \
+    -o /usr/share/secbian/wallpaper.png

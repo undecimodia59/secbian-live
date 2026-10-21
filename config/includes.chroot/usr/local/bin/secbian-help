@@ -1,0 +1,20 @@
+#!/bin/sh
+printf '%s\n' \
+    'Super+Enter       Terminal' \
+    'Super+D           Applications' \
+    'Super+Tab         Windows' \
+    'Super+Shift+D     Run command' \
+    'Super+F           Fullscreen' \
+    'Super+B / V       Split horizontal / vertical' \
+    'Super+H J K L     Focus left / down / up / right' \
+    'Super+Shift+H J K L    Move window' \
+    'Super+1...0       Switch workspace' \
+    'Super+Shift+1...0 Move to workspace' \
+    'Super+R           Resize mode (Enter/Esc to leave)' \
+    'Super+Space       Focus tiled / floating' \
+    'Super+Shift+Space Toggle floating' \
+    'Super+Shift+X     Lock screen' \
+    'Super+Shift+E     Session menu' \
+    'Super+Shift+C     Reload i3 configuration' \
+    'Super+Ctrl+Space  Notification history' |
+    rofi -dmenu -i -no-custom -p 'Shortcuts' >/dev/null

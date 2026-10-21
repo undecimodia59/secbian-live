@@ -1,0 +1,8 @@
+[org/gnome/desktop/interface]
+color-scheme='prefer-dark'
+gtk-theme='Adwaita-dark'
+icon-theme='Papirus-Dark'
+font-name='DejaVu Sans 12'
+monospace-font-name='DejaVu Sans Mono 11'
+cursor-theme='Adwaita'
+cursor-size=24

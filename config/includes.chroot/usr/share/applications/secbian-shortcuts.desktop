@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Secbian Shortcuts
+Comment=View desktop keyboard shortcuts
+Exec=/usr/local/bin/secbian-help
+Icon=preferences-desktop-keyboard-shortcuts
+Terminal=false
+Categories=System;Utility;

@@ -1,42 +1,118 @@
 set $mod Mod4
+set $bg #080d17
+set $surface #101923
+set $text #e8eef5
+set $muted #99aabc
+set $border #34465b
+set $accent #52e0c4
+set $urgent #f2778b
 
-# Font
-font pango:monospace 14
+font pango:DejaVu Sans 10
+floating_modifier $mod
+default_border pixel 2
+default_floating_border pixel 2
+hide_edge_borders smart
+gaps inner 6
+gaps outer 2
+smart_gaps on
+workspace_auto_back_and_forth yes
+focus_on_window_activation smart
 
-# Start i3status
-bar {
-    status_command i3status
-}
+# Border, background, text, indicator, child border.
+client.focused          $accent $surface $text  $accent $accent
+client.focused_inactive $border $surface $muted $border $border
+client.unfocused        $border $bg      $muted $border $border
+client.urgent           $urgent $urgent  $bg    $urgent $urgent
+client.placeholder      $border $surface $text $border $border
+client.background       $bg
 
-# Keybindings
-bindsym $mod+Return exec kitty
-bindsym $mod+d exec rofi -show drun
+# Once per session; an i3 config reload does not spawn duplicates.
+exec --no-startup-id xsettingsd
+exec --no-startup-id dunst
+exec --no-startup-id nm-applet
+exec --no-startup-id feh --no-fehbg --bg-fill /usr/share/secbian/wallpaper.png
+
+bindsym $mod+F1 exec --no-startup-id /usr/local/bin/secbian-help
+bindsym $mod+Return exec --no-startup-id kitty
+bindsym $mod+d exec --no-startup-id rofi -show drun
+bindsym $mod+Tab exec --no-startup-id rofi -show window
+bindsym $mod+Shift+d exec --no-startup-id rofi -show run
 bindsym $mod+Shift+q kill
-bindsym $mod+Shift+x exec i3lock -c 000000
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Exit?' -B 'Yes' 'i3-msg exit'"
+bindsym $mod+Shift+x exec --no-startup-id i3lock -c 080d17
+bindsym $mod+Shift+e exec --no-startup-id /usr/local/bin/secbian-session
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r restart
+bindsym $mod+f fullscreen toggle
+bindsym $mod+b split h
+bindsym $mod+v split v
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+bindsym $mod+space focus mode_toggle
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+Control+space exec --no-startup-id dunstctl history-pop
 
-# Focus
 bindsym $mod+h focus left
 bindsym $mod+j focus down
 bindsym $mod+k focus up
 bindsym $mod+l focus right
-
-# Move
 bindsym $mod+Shift+h move left
 bindsym $mod+Shift+j move down
 bindsym $mod+Shift+k move up
 bindsym $mod+Shift+l move right
 
-# Workspaces
-bindsym $mod+1 workspace 1
-bindsym $mod+2 workspace 2
-bindsym $mod+3 workspace 3
-bindsym $mod+4 workspace 4
-bindsym $mod+5 workspace 5
-bindsym $mod+6 workspace 6
-bindsym $mod+7 workspace 7
-bindsym $mod+8 workspace 8
-bindsym $mod+9 workspace 9
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+bindsym $mod+3 workspace number 3
+bindsym $mod+4 workspace number 4
+bindsym $mod+5 workspace number 5
+bindsym $mod+6 workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+bindsym $mod+0 workspace number 10
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+bindsym $mod+Shift+0 move container to workspace number 10
 
-# Floating
-bindsym $mod+Shift+space floating toggle
+bindsym $mod+r mode "resize"
+mode "resize" {
+    bindsym h resize shrink width 10 px or 10 ppt
+    bindsym j resize grow height 10 px or 10 ppt
+    bindsym k resize shrink height 10 px or 10 ppt
+    bindsym l resize grow width 10 px or 10 ppt
+    bindsym Left resize shrink width 10 px or 10 ppt
+    bindsym Down resize grow height 10 px or 10 ppt
+    bindsym Up resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+for_window [window_role="GtkFileChooserDialog"] floating enable
+for_window [class="(?i)nm-connection-editor"] floating enable
+
+bar {
+    position top
+    status_command i3status
+    font pango:DejaVu Sans 10
+    separator_symbol " | "
+    tray_padding 4
+    colors {
+        background $bg
+        statusline $text
+        separator $border
+        focused_workspace $accent $accent $bg
+        active_workspace $border $surface $text
+        inactive_workspace $bg $bg $muted
+        urgent_workspace $urgent $urgent $bg
+        binding_mode $accent $surface $text
+    }
+}
