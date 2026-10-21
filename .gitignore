@@ -21,3 +21,10 @@ SHA256SUMS
 /secbian-*.contents
 /secbian-*.files
 /secbian-*.packages
+
+config/binary
+config/bootstrap
+config/chroot
+config/common
+config/source
+config/control
