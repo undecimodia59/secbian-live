@@ -10,6 +10,13 @@ then
 	exit 1
 fi
 
+# GNU shred is supplied by Debian's essential coreutils package (no separate
+# shred package is needed). Fail the build if erase's backend is missing.
+if ! command -v shred >/dev/null 2>&1; then
+	echo "ERROR: shred is missing; restore the coreutils package and rebuild." >&2
+	exit 1
+fi
+
 # Configure the image's firewall offline.
 # A plain chroot shares the builder's network namespace.
 test -f /etc/default/ufw

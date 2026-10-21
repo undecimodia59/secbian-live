@@ -32,6 +32,7 @@ for _FILE in \
 	/etc/usbguard/usbguard-daemon.conf \
 	/etc/systemd/system/usbguard.service.d/secbian.conf \
 	/usr/local/bin/secbian-usb \
+	/usr/local/bin/erase \
 	/usr/local/sbin/secbian-random-hostname \
 	/usr/share/secbian/volatility3-requirements.txt \
 	/usr/lib/live/config-hooks/1000-secbian-password

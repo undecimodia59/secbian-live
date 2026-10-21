@@ -48,7 +48,7 @@ artifacts separately first.
 | List            | Contents                                                                                                        |
 |-----------------|-----------------------------------------------------------------------------------------------------------------|
 | security.list   | nmap, wireshark, aircrack-ng, john, hashcat, hydra, sqlmap, gobuster, ffuf, nikto, netcat, tcpdump, ettercap, dsniff, foremost, testdisk, binwalk, sleuthkit, chkrootkit, rkhunter (+ nuclei & volatility3 via pinned hooks) |
-| privacy.list    | mullvad-browser, mullvad-vpn, tor, torsocks, nyx, obfs4proxy, firejail, apparmor stack, usbguard, ufw, mat2, metadata-cleaner, cryptsetup |
+| privacy.list    | mullvad-browser, mullvad-vpn, tor, torsocks, nyx, obfs4proxy, firejail, apparmor stack, usbguard, ufw, mat2, metadata-cleaner, cryptsetup; erase(Custom shred wrapper) |
 | desktop.list    | i3, lightdm, kitty, rofi, dunst, feh, xorg, network-manager-applet, firmware-linux/-realtek/-iwlwifi             |
 | useful.list     | gparted, tmux, git, python3-pip/-venv, build-essential, unzip                                                   |
 
@@ -72,6 +72,46 @@ artifacts separately first.
   Nuclei templates / Volatility symbol tables download on first use.
 - Normal and fail-safe boot use the same live user, password hook and security
   arguments; fail-safe adds hardware compatibility arguments.
+
+## File overwriting and deletion
+
+GNU `shred` is included through Debian's essential `coreutils` package; the setup
+hook checks that it is available. The `erase` wrapper supplies the everyday
+defaults, including recursive removal; `rm` keeps its normal behavior.
+
+```sh
+# One random pass, one zero pass, then removal:
+erase ./file
+erase -r ./folder
+
+# Multiple files and names starting with a dash:
+erase ./first ./second
+erase -- -filename
+```
+
+`erase` uses `shred` with exactly those two overwrite passes and removes each file
+only after successful overwriting. Recursive mode skips symlinks, hard-linked
+files, special files and mount points. It rejects `/`, the current directory and
+its ancestors. Failed or skipped entries remain in place, with a nonzero exit
+status; it never finishes with a blanket `rm -rf`. Use it on a tree that other
+processes are not modifying. It starts immediately, without a confirmation prompt.
+
+These tools attempt overwriting; they cannot guarantee erasure on SSDs, USB flash,
+copy-on-write filesystems, snapshots or backups. Overwriting a file from the live
+image affects its overlay copy, leaving the read-only squashfs original intact.
+Overwriting files in RAM does not guarantee removal of every other RAM copy.
+Use encryption before storing sensitive data on persistent media.
+See [GNU shred limitations](https://www.gnu.org/software/coreutils/manual/html_node/shred-invocation.html).
+
+## Shell shortcuts
+
+Interactive Bash sessions load these aliases from `~/.bash_aliases`:
+
+| Alias | Command |
+|-------|---------|
+| `la` | `ls -lah` |
+| `ll` | `ls -lh` |
+| `cl` | `clear` |
 
 ## USB devices
 

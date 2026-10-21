@@ -1,0 +1,113 @@
+#!/usr/bin/python3
+"""Best-effort file overwriting: one random pass, one zero pass, then unlink."""
+
+import argparse
+import os
+from pathlib import Path
+import re
+import stat
+import subprocess
+import sys
+
+
+def mounted_paths():
+    # Include same-filesystem bind mounts, which a st_dev check alone misses.
+    paths = set()
+    for line in Path("/proc/self/mountinfo").read_text().splitlines():
+        mount = re.sub(r"\\([0-7]{3})", lambda m: chr(int(m[1], 8)), line.split()[4])
+        paths.add(os.path.realpath(mount))
+    return paths
+
+
+def identity(info):
+    return info.st_dev, info.st_ino
+
+
+def erase_entry(parent_fd, name, display, recursive, device, mounts):
+    fd = None
+    try:
+        before = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
+        if before.st_dev != device or os.path.realpath(display) in mounts:
+            raise ValueError("mounted filesystems are skipped")
+        if stat.S_ISLNK(before.st_mode):
+            raise ValueError("symbolic links are skipped")
+        if stat.S_ISDIR(before.st_mode):
+            if not recursive:
+                raise ValueError("directory requires -r")
+            fd = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=parent_fd)
+            if identity(os.fstat(fd)) != identity(before):
+                raise ValueError("directory changed while opening")
+            success = True
+            for child in sorted(os.listdir(fd)):
+                if not erase_entry(fd, child, display / child, True, device, mounts):
+                    success = False
+            if not success:
+                return False  # Retain directories containing failed/skipped entries.
+            if identity(os.stat(name, dir_fd=parent_fd, follow_symlinks=False)) != identity(before):
+                raise ValueError("directory changed before removal")
+            os.rmdir(name, dir_fd=parent_fd)
+        elif stat.S_ISREG(before.st_mode):
+            # NONBLOCK avoids hanging if a concurrent change replaces a file with
+            # a FIFO; inspect the opened object again before invoking shred.
+            fd = os.open(name, os.O_WRONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=parent_fd)
+            opened = os.fstat(fd)
+            if identity(opened) != identity(before) or not stat.S_ISREG(opened.st_mode):
+                raise ValueError("file changed while opening")
+            if opened.st_nlink != 1:
+                raise ValueError("hard-linked files are skipped")
+            print(f"Erasing: {display}", flush=True)
+            # Operate on the already-open file, not a path that could be replaced.
+            result = subprocess.run(
+                ["shred", "--iterations=1", "--zero", "--", f"/proc/self/fd/{fd}"],
+                pass_fds=(fd,), capture_output=True, text=True,
+            )
+            if result.returncode:
+                raise ValueError("overwrite failed; file retained: " + result.stderr.strip())
+            current = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
+            if identity(current) != identity(opened) or current.st_nlink != 1:
+                raise ValueError("file changed before removal; entry retained")
+            os.unlink(name, dir_fd=parent_fd)
+        else:
+            raise ValueError("special files are skipped")
+        return True
+    except (OSError, ValueError) as error:
+        print(f"erase: {display}: {error}", file=sys.stderr)
+        return False
+    finally:
+        if fd is not None:
+            os.close(fd)
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(
+        description="Overwrite with one random pass and one zero pass, then remove. "
+                    "Best effort only; SSDs, snapshots and live overlays limit erasure."
+    )
+    parser.add_argument("-r", "--recursive", action="store_true", help="process directory trees")
+    parser.add_argument("paths", nargs="+", help="files or directories to erase")
+    args = parser.parse_args(argv)
+    mounts = mounted_paths()
+    success = True
+    for value in args.paths:
+        path = Path(os.path.abspath(value))
+        try:
+            # Refuse /, mount roots, the current directory, and its ancestors.
+            resolved = path.resolve()
+            cwd = Path.cwd().resolve()
+            if resolved == Path("/") or resolved == cwd or resolved in cwd.parents:
+                raise ValueError("refusing filesystem root or current-directory ancestor")
+            parent_fd = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                device = os.fstat(parent_fd).st_dev
+                if not erase_entry(parent_fd, path.name, path, args.recursive, device, mounts):
+                    success = False
+            finally:
+                os.close(parent_fd)
+        except (OSError, ValueError) as error:
+            print(f"erase: {path}: {error}", file=sys.stderr)
+            success = False
+    return 0 if success else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
