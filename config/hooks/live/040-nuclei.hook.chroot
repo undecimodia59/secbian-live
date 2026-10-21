@@ -6,14 +6,16 @@ NUCLEI_VERSION="3.11.1"
 NUCLEI_URL="https://github.com/projectdiscovery/nuclei/releases/download/v${NUCLEI_VERSION}/nuclei_${NUCLEI_VERSION}_linux_amd64.zip"
 NUCLEI_SHA256="ea63d4ae232808cd7c6bc00d0142428e231fab59dae01042246097d195835ab6"
 
-if [ ! -x /usr/local/bin/nuclei ]; then
-	wget -q -O /tmp/nuclei.zip "${NUCLEI_URL}"
-	echo "${NUCLEI_SHA256}  /tmp/nuclei.zip" | sha256sum -c -
-	unzip -o -j /tmp/nuclei.zip nuclei -d /usr/local/bin
-	rm -f /tmp/nuclei.zip
-fi
+# Always verify the artifact, including on incremental builds. Never execute an
+# existing binary merely because it is executable or reports the right version.
+NUCLEI_TMP=$(mktemp -d)
+trap 'rm -rf "${NUCLEI_TMP}"' EXIT HUP INT TERM
+wget -q -O "${NUCLEI_TMP}/nuclei.zip" "${NUCLEI_URL}"
+echo "${NUCLEI_SHA256}  ${NUCLEI_TMP}/nuclei.zip" | sha256sum -c -
+unzip -q -j "${NUCLEI_TMP}/nuclei.zip" nuclei -d "${NUCLEI_TMP}"
+install -m 755 "${NUCLEI_TMP}/nuclei" /usr/local/bin/nuclei
 
-chmod 755 /usr/local/bin/nuclei
-
-# Smoke test: print the pinned version
-/usr/local/bin/nuclei -version
+# Assert the version as well as checking the downloaded archive's hash.
+NUCLEI_OUTPUT=$(/usr/local/bin/nuclei -version 2>&1)
+printf '%s\n' "${NUCLEI_OUTPUT}"
+printf '%s\n' "${NUCLEI_OUTPUT}" | grep -F "Nuclei Engine Version: v${NUCLEI_VERSION}" >/dev/null

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=USB Devices
+Comment=Review and approve blocked USB devices
+Exec=/usr/local/bin/secbian-usb
+Icon=drive-removable-media-usb
+Terminal=false
+Categories=System;Security;
+Keywords=USB;devices;approve;blocked;

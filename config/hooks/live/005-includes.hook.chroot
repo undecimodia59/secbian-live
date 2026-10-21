@@ -29,6 +29,11 @@ for _FILE in \
 	/etc/systemd/system/random-hostname.service \
 	/etc/systemd/system/multi-user.target.wants/random-hostname.service \
 	/etc/usbguard/rules.conf \
+	/etc/usbguard/usbguard-daemon.conf \
+	/etc/systemd/system/usbguard.service.d/secbian.conf \
+	/usr/local/bin/secbian-usb \
+	/usr/local/sbin/secbian-random-hostname \
+	/usr/share/secbian/volatility3-requirements.txt \
 	/usr/lib/live/config-hooks/1000-secbian-password
 do
 	if [ ! -e "${_FILE}" ]

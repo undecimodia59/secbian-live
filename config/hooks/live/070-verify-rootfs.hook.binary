@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+
+# live-build's dm-verity stage uses a pipeline which can hide veritysetup errors.
+# Independently verify its output before allowing the finished image to ship.
+# live-build runs .binary hooks with the binary/ directory as their cwd.
+IMAGE=live/filesystem.squashfs
+test -s "${IMAGE}"
+test -s "${IMAGE}.verity"
+test -s "${IMAGE}.roothash"
+ROOT_HASH=$(cat "${IMAGE}.roothash")
+if ! printf '%s\n' "${ROOT_HASH}" | grep -Eq '^[[:xdigit:]]{64}$'; then
+    echo 'ERROR: missing or invalid dm-verity SHA-256 root hash.' >&2
+    exit 1
+fi
+veritysetup verify "${IMAGE}" "${IMAGE}.verity" "${ROOT_HASH}"

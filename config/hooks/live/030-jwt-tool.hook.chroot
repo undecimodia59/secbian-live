@@ -18,6 +18,13 @@ if [ "$(git rev-parse HEAD)" != "${JWT_TOOL_COMMIT}" ]; then
 	exit 1
 fi
 
+# HEAD alone does not verify the files that will actually be shipped. Ignore
+# executable-bit changes: this hook intentionally makes jwt_tool.py executable.
+if ! git -c core.fileMode=false diff --quiet HEAD -- . || [ -n "$(git ls-files --others)" ]; then
+	echo "jwt_tool: checkout has modified or untracked files; use a clean chroot and rebuild." >&2
+	exit 1
+fi
+
 # Dependencies come from the Debian archive (python3-termcolor, python3-requests,
 # python3-ratelimit, python3-pycryptodome - the latter provides the Cryptodome
 # namespace jwt_tool imports). No PyPI install needed, so no sdist builds.

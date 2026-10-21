@@ -1,0 +1,30 @@
+#!/usr/bin/python3
+"""Set a per-boot hostname after live-config, without early-boot D-Bus calls."""
+
+from pathlib import Path
+import re
+import secrets
+import socket
+
+
+def update_hosts(text, hostname):
+    line = f"127.0.1.1\t{hostname}"
+    pattern = r"^127\.0\.1\.1(?:[ \t].*)?$"
+    if re.search(pattern, text, flags=re.MULTILINE):
+        return re.sub(pattern, lambda _: line, text, flags=re.MULTILINE)
+    return text + ("\n" if text and not text.endswith("\n") else "") + line + "\n"
+
+
+def configure(root=Path("/"), set_hostname=socket.sethostname):
+    hostname = "sec-" + secrets.token_hex(4)
+    hosts = root / "etc/hosts"
+    contents = update_hosts(hosts.read_text(), hostname)
+    (root / "etc/hostname").write_text(hostname + "\n")
+    hosts.write_text(contents)
+    set_hostname(hostname.encode("ascii"))
+    return hostname
+
+
+if __name__ == "__main__":
+    # Any read/write/syscall failure propagates to systemd as a failed unit.
+    configure()

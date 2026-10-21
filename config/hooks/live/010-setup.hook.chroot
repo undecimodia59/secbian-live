@@ -33,6 +33,10 @@ systemctl enable ufw.service
 # AppArmor
 systemctl enable apparmor.service
 
+# Apply our daemon configuration rather than the package-generated allowlist.
+chmod 600 /etc/usbguard/rules.conf /etc/usbguard/usbguard-daemon.conf
+systemctl enable usbguard.service
+
 # Tor: installed but manual start only (sudo systemctl start tor)
 systemctl disable tor.service || true
 

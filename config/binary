@@ -10,13 +10,14 @@ LB_BINARY_FILESYSTEM="fat32"
 LB_APT_INDICES="false"
 
 # Set boot parameters
-LB_BOOTAPPEND_LIVE="boot=live components username=secbian hostname=secbian live-config.user-default-groups=audio,cdrom,dip,floppy,video,plugdev,netdev,powerdev,scanner,bluetooth,debian-tor,dialout,wireshark live-config.hooks=filesystem apparmor=1 security=apparmor slab_nomerge init_on_alloc=1 init_on_free=1 page_alloc.shuffle=1 vsyscall=none lockdown=integrity"
+LB_BOOTAPPEND_LIVE="boot=live components username=secbian hostname=secbian live-config.user-default-groups=audio,cdrom,dip,floppy,video,plugdev,netdev,powerdev,scanner,bluetooth,debian-tor,dialout,wireshark live-config.hooks=filesystem apparmor=1 security=apparmor slab_nomerge init_on_alloc=1 init_on_free=1 page_alloc.shuffle=1 vsyscall=none lockdown=integrity dm-verity-oncorruption=panic"
 
 # Set boot parameters
 LB_BOOTAPPEND_INSTALL=""
 
 # Set boot parameters
-LB_BOOTAPPEND_LIVE_FAILSAFE="boot=live components memtest noapic noapm nodma nomce nosmp nosplash vga=788"
+# Retain the normal entry's identity and protections in recovery mode.
+LB_BOOTAPPEND_LIVE_FAILSAFE="${LB_BOOTAPPEND_LIVE} memtest noapic noapm nodma nomce nosmp nosplash vga=788"
 
 # Set BIOS bootloader
 LB_BOOTLOADER_BIOS="syslinux"
@@ -34,7 +35,8 @@ LB_CHECKSUMS="sha256"
 LB_COMPRESSION="none"
 
 # Support dm-verity on rootfs
-LB_DM_VERITY=""
+# Detect corruption; the on-media root hash is NOT an authenticated trust anchor.
+LB_DM_VERITY="true"
 
 # Support FEC on dm-verity rootfs
 LB_DM_VERITY_FEC_ROOTS=""
@@ -116,4 +118,5 @@ LB_SWAP_FILE_PATH=""
 LB_SWAP_FILE_SIZE="512"
 
 # Enable/disable UEFI secure boot support
-LB_UEFI_SECURE_BOOT="auto"
+# Fail the build if signed UEFI packages are unavailable; BIOS remains supported.
+LB_UEFI_SECURE_BOOT="enable"

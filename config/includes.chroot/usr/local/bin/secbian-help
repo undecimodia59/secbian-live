@@ -16,6 +16,7 @@ printf '%s\n' \
     'Super+Space       Focus tiled / floating' \
     'Super+Shift+Space Toggle floating' \
     'Super+Shift+X     Lock screen' \
+    'Super+Shift+U     Review blocked USB devices' \
     'Super+Shift+E     Session menu' \
     'Super+Shift+C     Reload i3 configuration' \
     'Super+Ctrl+Space  Notification history' |

@@ -1,0 +1,106 @@
+#!/usr/bin/python3
+"""Review blocked USB devices and approve one attachment at a time."""
+
+import html
+import re
+import subprocess
+import unicodedata
+
+
+def run(*args, **kwargs):
+    return subprocess.run(args, text=True, capture_output=True, timeout=15, **kwargs)
+
+
+def visible(text):
+    # Device descriptors are untrusted: remove controls, including bidi overrides.
+    return " ".join("".join(
+        c if not unicodedata.category(c).startswith("C") else " " for c in text
+    ).split())[:400]
+
+
+def blocked_devices():
+    result = run("sudo", "-n", "usbguard", "list-devices", "--blocked")
+    if result.returncode:
+        raise RuntimeError("USB protection is unavailable. Check: sudo systemctl status usbguard")
+    devices = []
+    for line in result.stdout.splitlines():
+        match = re.match(r"^([0-9]+): block ", line)
+        if match:
+            devices.append((match[1], line))
+    return devices
+
+
+def describe(device_id, descriptor):
+    def field(key):
+        match = re.search(r' ' + key + r' "((?:\\.|[^"\\])*)"', descriptor)
+        return visible(match[1])[:120] if match else ""
+
+    # Remove quoted strings before reading interface attributes, so a forged
+    # product name cannot pretend to be another attribute in the review panel.
+    attributes = re.sub(r'"(?:\\.|[^"\\])*"', '""', descriptor)
+    identity = re.match(r'^[0-9]+: block id ([0-9a-fA-F]{4}:[0-9a-fA-F]{4})\b', attributes)
+    identity = identity[1] if identity else "unknown"
+    interfaces = re.search(r' with-interface (\{[^}]*\}|[0-9a-fA-F:*]+)', attributes)
+    name = field("name") or "Unnamed USB device"
+    details = f"{name}\nUSB ID: {identity}"
+    if field("serial"):
+        details += "\nSerial: " + field("serial")
+    if interfaces:
+        details += "\nInterfaces: " + visible(interfaces[1])
+    return f"{name}  [{identity}]  #{device_id}", details
+
+
+def choose(rows, prompt, message=None):
+    args = ["rofi", "-dmenu", "-i", "-no-custom", "-no-markup-rows",
+            "-format", "i", "-p", prompt]
+    if message:
+        args += ["-mesg", html.escape(message)]
+    # A selection may take as long as the user needs; only backend calls time out.
+    result = subprocess.run(args, input="\n".join(rows) + "\n", text=True,
+                            capture_output=True)
+    if result.returncode:
+        return None
+    value = result.stdout.strip()
+    if not value.isdecimal() or not 0 <= int(value) < len(rows):
+        return None
+    return int(value)
+
+
+def dialog(message):
+    subprocess.run(["rofi", "-e", html.escape(message)], check=False)
+
+
+def main():
+    try:
+        while True:
+            devices = blocked_devices()
+            if not devices:
+                dialog("No USB devices are waiting for approval.")
+                return 0
+            rows = [describe(device_id, line)[0] for device_id, line in devices]
+            selection = choose(rows, "USB Devices", "Select a device to review. Esc closes this window.")
+            if selection is None:
+                return 0
+            device_id, descriptor = devices[selection]
+            answer = choose(["Keep blocked", "Allow this attachment"], "Approve USB?",
+                            describe(device_id, descriptor)[1] +
+                            "\nOnly allow a device you recognize. Its name can be forged.")
+            if answer is None:
+                return 0
+            if answer != 1:
+                continue
+            # Do not authorize a stale selection if the device disappeared/changed.
+            if (device_id, descriptor) not in blocked_devices():
+                dialog("The device changed or disconnected. Please select it again.")
+                continue
+            result = run("sudo", "-n", "usbguard", "allow-device", device_id)
+            if result.returncode:
+                raise RuntimeError("Could not approve this device. It may have disconnected.")
+            run("notify-send", "USB device allowed", "Approval lasts until the device disconnects.")
+    except (OSError, subprocess.TimeoutExpired, RuntimeError) as error:
+        dialog(str(error))
+        return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
