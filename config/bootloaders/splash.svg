@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="640" height="480" viewBox="0 0 640 480">
+  <title>Secbian Live boot background</title>
+
+  <rect width="640" height="480" fill="#080d17"/>
+  <path d="M0 208H640 M0 442H640" stroke="#1a2a3d"/>
+
+  <!-- Terminal brackets and a rounded S. -->
+  <g transform="translate(43 35)" fill="#52e0c4">
+    <path d="M37 22H19V106H37 M91 22H109V106H91"
+          fill="none"
+          stroke="#52e0c4"
+          stroke-width="8"/>
+    <text x="64" y="90"
+          text-anchor="middle"
+          font-family="DejaVu Sans"
+          font-weight="bold"
+          font-size="76">S</text>
+  </g>
+
+  <g font-family="DejaVu Sans">
+    <text x="198" y="80"
+          font-size="37"
+          font-weight="bold"
+          letter-spacing="1.5"
+          fill="#f3f7fb">SECBIAN</text>
+
+    <text x="200" y="108"
+          font-size="13"
+          letter-spacing="2.5"
+          fill="#52e0c4">LIVE ENVIRONMENT</text>
+
+    <text x="200" y="141"
+          font-size="12"
+          fill="#b0becf">Debian 13 (trixie) / @ARCHITECTURE@</text>
+
+    <text x="200" y="163"
+          font-size="11"
+          fill="#7f93aa">Build @YEAR@-@MONTH@-@DAY@</text>
+  </g>
+</svg>

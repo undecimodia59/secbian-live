@@ -4,7 +4,7 @@ general {
 }
 
 # order += "load"
-# order += "memory"
+order += "memory"
 order += "disk /"
 # order += "ethernet _first_"
 # order += "wireless _first_"
@@ -36,7 +36,7 @@ wireless _first_ {
 }
 
 battery all {
-    format = "Bat: %percentage%"
+    format = "Bat: %percentage"
 }
 
 tztime local {

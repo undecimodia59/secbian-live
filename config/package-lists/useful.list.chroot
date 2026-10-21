@@ -11,3 +11,4 @@ python3-ratelimit
 python3-pycryptodome
 build-essential
 unzip
+fastfetch

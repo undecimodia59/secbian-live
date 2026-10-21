@@ -1,0 +1,45 @@
+{
+  "logo": {
+    "type": "file",
+    "source": "/usr/share/secbian/logo.txt",
+    "color": {
+      "1": "cyan"
+    },
+    "padding": {
+      "right": 3
+    }
+  },
+  "display": {
+    "separator": " : ",
+    "color": {
+      "keys": "cyan",
+      "title": "white"
+    }
+  },
+  "modules": [
+    "title",
+    "separator",
+    {
+      "type": "custom",
+      "key": "System",
+      "format": "Secbian Live / Debian 13 (trixie)"
+    },
+    "os",
+    "kernel",
+    "uptime",
+    "packages",
+    "shell",
+    "wm",
+    "terminal",
+    "cpu",
+    "gpu",
+    "memory",
+    "swap",
+    {
+      "type": "disk",
+      "folders": "/"
+    },
+    "break",
+    "colors"
+  ]
+}
