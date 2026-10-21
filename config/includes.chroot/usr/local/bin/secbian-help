@@ -7,7 +7,9 @@ printf '%s\n' \
     'Super+F           Fullscreen' \
     'Super+B / V       Split horizontal / vertical' \
     'Super+H J K L     Focus left / down / up / right' \
+    'Super+Arrows      Focus left / down / up / right' \
     'Super+Shift+H J K L    Move window' \
+    'Super+Shift+Arrows     Move window' \
     'Super+1...0       Switch workspace' \
     'Super+Shift+1...0 Move to workspace' \
     'Super+R           Resize mode (Enter/Esc to leave)' \

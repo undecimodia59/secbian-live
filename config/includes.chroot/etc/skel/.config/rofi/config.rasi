@@ -30,6 +30,7 @@ window {
     border: 2px;
     border-radius: 8px;
     padding: 18px;
+    background-color: #101923;
 }
 mainbox {
     children: [inputbar, mode-switcher, listview];
@@ -78,4 +79,32 @@ element alternate.normal { background-color: @bg; }
 element selected.normal {
     background-color: @selected;
     text-color: @fg;
+}
+/* Fix the light padding around the content. */
+mainbox, inputbar, listview, mode-switcher {
+    background-color: #101923;
+    border: 0px;
+}
+
+/* Fix inherited dark text. */
+entry {
+    text-color: #e8eef5;
+    placeholder-color: #99aabc;
+}
+
+element normal.normal,
+element alternate.normal,
+element normal.active,
+element alternate.active,
+element normal.urgent,
+element alternate.urgent {
+    background-color: #101923;
+    text-color: #e8eef5;
+}
+
+element selected.normal,
+element selected.active,
+element selected.urgent {
+    background-color: #174c50;
+    text-color: #e8eef5;
 }
