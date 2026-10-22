@@ -48,7 +48,7 @@ artifacts separately first.
 | List            | Contents                                                                                                        |
 |-----------------|-----------------------------------------------------------------------------------------------------------------|
 | security.list   | nmap, wireshark, aircrack-ng, john, hashcat, hydra, sqlmap, gobuster, ffuf, nikto, netcat, tcpdump, ettercap, dsniff, foremost, testdisk, binwalk, sleuthkit, chkrootkit, rkhunter (+ nuclei & volatility3 via pinned hooks) |
-| privacy.list    | mullvad-browser, mullvad-vpn, tor, torsocks, nyx, obfs4proxy, firejail, apparmor stack, usbguard, ufw, mat2, metadata-cleaner, cryptsetup; erase(Custom shred wrapper) |
+| privacy.list    | mullvad-browser, mullvad-vpn, tor, torsocks, nyx, obfs4proxy, firejail, apparmor stack, usbguard, ufw, mat2, metadata-cleaner, cryptsetup, bind9-dnsutils (dig); erase(Custom shred wrapper) |
 | desktop.list    | i3, lightdm, kitty, rofi, dunst, feh, xorg, network-manager-applet, firmware-linux/-realtek/-iwlwifi             |
 | useful.list     | gparted, tmux, git, python3-pip/-venv, build-essential, unzip                                                   |
 

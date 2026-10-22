@@ -12,3 +12,5 @@ python3-pycryptodome
 build-essential
 unzip
 fastfetch
+jq
+golang-go

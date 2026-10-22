@@ -16,3 +16,4 @@ mat2
 metadata-cleaner
 cryptsetup
 cryptsetup-initramfs
+bind9-dnsutils
