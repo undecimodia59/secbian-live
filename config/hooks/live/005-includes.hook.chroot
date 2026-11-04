@@ -44,7 +44,8 @@ do
 	if [ ! -e "${_FILE}" ]
 	then
 		echo "ERROR: include missing from the image: ${_FILE}" >&2
-		echo "       The include copy stage was skipped - rebuild with:" >&2
+		echo "       Check that the file exists under config/includes.chroot and was committed/transferred." >&2
+		echo "       If the source files are present, clear stale build stages and rebuild with:" >&2
 		echo "         lb clean --stage --chroot && lb config && lb build" >&2
 		exit 1
 	fi

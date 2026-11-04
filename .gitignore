@@ -10,7 +10,7 @@ chroot.packages.*
 chroot.files
 *.iso
 *.img
-SHA256SUMS
+/SHA256SUMS
 
 # Additional live-build temporary files
 /binary.modified_timestamps
