@@ -67,12 +67,8 @@ then
 	exit 1
 fi
 
-# live-build imports this key from config/archives before package installation.
-# The final-image .binary key is installed later, so do not require it here.
-# /usr/share/keyrings/mullvad-keyring.asc is not used by either APT entry.
-if [ ! -s /etc/apt/trusted.gpg.d/mullvad.key.chroot.asc ]
-then
-	echo "ERROR: Mullvad chroot APT key missing: /etc/apt/trusted.gpg.d/mullvad.key.chroot.asc" >&2
-	echo "Check config/archives/mullvad.key.chroot and live-build's archive setup stage." >&2
-	exit 1
-fi
+# Archive keys and source lists belong to live-build's chroot_archives stage,
+# which applies/removes build-time APT configuration independently of includes.
+# Do not assert a particular stage's key filename here: it can be absent when
+# this hook is rerun against an already-prepared/finalized chroot. APT signature
+# verification and the configured signed-by entries remain unchanged.

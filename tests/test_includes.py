@@ -52,7 +52,7 @@ class IncludesTests(unittest.TestCase):
         result = self.run_hook()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual((self.image / self.required[0]).read_text(), "base\n")
-        # Only the actual chroot APT key is required at this stage.
+        # Neither the unused include key nor a final-image key is required.
         self.assertFalse((self.image / "usr/share/keyrings/mullvad-keyring.asc").exists())
         self.assertFalse((self.image / "etc/apt/trusted.gpg.d/mullvad.key.binary.asc").exists())
 
@@ -77,11 +77,20 @@ class IncludesTests(unittest.TestCase):
             self.assertIn(str(self.image / relative), result.stderr)
         self.assertIn("committed/transferred", result.stderr)
 
-    def test_actual_chroot_apt_key_is_required(self):
+    def test_resumed_image_with_only_binary_key_succeeds(self):
+        self.apt_key.unlink()
+        binary_key = self.image / "etc/apt/trusted.gpg.d/mullvad.key.binary.asc"
+        self.write(binary_key, "test final-image key\n")
+        result = self.run_hook()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(self.apt_key.exists())
+        self.assertEqual(binary_key.read_text(), "test final-image key\n")
+
+    def test_include_copy_does_not_require_or_create_archive_stage_keys(self):
         self.apt_key.unlink()
         result = self.run_hook()
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("Mullvad chroot APT key missing", result.stderr)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(self.apt_key.exists())
 
 
 if __name__ == "__main__":
