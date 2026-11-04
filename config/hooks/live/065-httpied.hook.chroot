@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+
+# Validate the included release on the target Debian runtime, without starting
+# the UI, binding a proxy listener, opening a project or installing certificates.
+test -x /usr/local/bin/httpied
+command -v certutil >/dev/null
+sha256sum -c /usr/share/doc/httpied/SHA256SUMS
+/usr/local/bin/httpied --help >/dev/null

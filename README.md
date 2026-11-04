@@ -51,6 +51,42 @@ artifacts separately first.
 | privacy.list    | mullvad-browser, mullvad-vpn, tor, torsocks, nyx, obfs4proxy, firejail, apparmor stack, usbguard, ufw, mat2, metadata-cleaner, cryptsetup, bind9-dnsutils (dig); erase(Custom shred wrapper) |
 | desktop.list    | i3, lightdm, kitty, rofi, dunst, feh, xorg, network-manager-applet, firmware-linux/-realtek/-iwlwifi             |
 | useful.list     | gparted, tmux, git, python3-pip/-venv, build-essential, unzip                                                   |
+| included binary | [HTTPied](https://github.com/undecimodia59/HTTPied): native HTTP(S) interception and testing workspace, supplied as a prebuilt Linux x86_64 Trixie release |
+
+### [HTTPied](https://github.com/undecimodia59/HTTPied)
+
+Launch **HTTPied** from the application menu (`Super+D`), or run `httpied` from a
+terminal. It provides Intercept, History, Replay, Intruder, Attack, Compare and
+Coder workspaces, including a local JWT workbench. Projects store captures,
+workspace state and attack results in a local SQLite database. Choose **Open
+project**, **Create project**, or **Temporary session** on the start screen.
+Temporary sessions are removed on orderly exit; project files in the live RAM
+overlay are lost when the machine shuts down unless saved to external storage.
+
+For a capture-to-replay workflow, select a request in History, press `Ctrl+R` to
+open it in Replay, then `Ctrl+Enter` to send. Headless proxy mode is also available:
+
+```sh
+httpied --headless --listen 127.0.0.1:8080
+```
+
+The desktop supports HTTPS interception and automatically installs the opened
+project's public CA into the current user's Chromium NSS store. `libnss3-tools`
+and the X11/Wayland/OpenGL runtime libraries are included. **Open browser** needs
+a separately installed Chromium/Chrome browser; Mullvad Browser is not Chromium.
+Other certificate stores need manual public-CA import and browser proxy setup.
+Keep the project's private `ca.key.pem` private. Full usage documentation is
+included at `/usr/share/doc/httpied/README.md`.
+
+The executable is stored directly in
+`config/includes.chroot/usr/local/bin/httpied` and installed as
+`/usr/local/bin/httpied`. It comes from HTTPied's Trixie release, with a maximum
+required GLIBC symbol version of 2.39. The build hook verifies its SHA-256 and
+runs `httpied --help` inside the build chroot to detect loader incompatibility.
+No Rust toolchain or HTTPied source build is needed for the live image.
+When replacing the binary, use a Trixie-compatible UI build, refresh its bundled
+README and update `config/includes.chroot/usr/share/doc/httpied/SHA256SUMS`
+(the entry names `/usr/local/bin/httpied` inside the image).
 
 ## Notes
 

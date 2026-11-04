@@ -32,3 +32,14 @@ xdg-desktop-portal-gtk
 qt5-gtk-platformtheme
 qt6-gtk-platformtheme
 librsvg2-bin
+
+# HTTPied desktop runtime and NSS certificate setup helper.
+libx11-6
+libxi6
+libxcursor1
+libxrandr2
+libegl1
+libgl1
+libxkbcommon0
+libwayland-client0
+libnss3-tools

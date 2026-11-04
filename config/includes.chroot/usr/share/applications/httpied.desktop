@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=HTTPied
+Comment=Capture, intercept, replay and test HTTP(S) traffic
+Exec=/usr/local/bin/httpied
+TryExec=/usr/local/bin/httpied
+Icon=network-workgroup
+Terminal=false
+Categories=Development;
+Keywords=HTTP;HTTPS;proxy;intercept;replay;security;
