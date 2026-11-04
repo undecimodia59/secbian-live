@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=JADX
+Comment=Decompile Android APK and DEX files and browse Java source
+Exec=/usr/local/bin/jadx-gui %F
+TryExec=/usr/local/bin/jadx-gui
+Icon=applications-development
+Terminal=false
+Categories=Development;
+MimeType=application/vnd.android.package-archive;
+Keywords=Android;APK;DEX;Java;decompiler;reverse engineering;

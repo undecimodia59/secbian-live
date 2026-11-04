@@ -47,11 +47,34 @@ artifacts separately first.
 
 | List            | Contents                                                                                                        |
 |-----------------|-----------------------------------------------------------------------------------------------------------------|
-| security.list   | nmap, wireshark, aircrack-ng, john, hashcat, hydra, sqlmap, gobuster, ffuf, nikto, netcat, tcpdump, ettercap, dsniff, foremost, testdisk, binwalk, sleuthkit, chkrootkit, rkhunter (+ nuclei & volatility3 via pinned hooks) |
+| security.list   | nmap, wireshark, aircrack-ng, john, hashcat, hydra, sqlmap, gobuster, ffuf, nikto, netcat, tcpdump, ettercap, dsniff, foremost, testdisk, binwalk, sleuthkit, chkrootkit, rkhunter, apktool, Java runtime (+ nuclei, volatility3 & JADX via pinned hooks) |
 | privacy.list    | mullvad-browser, mullvad-vpn, tor, torsocks, nyx, obfs4proxy, firejail, apparmor stack, usbguard, ufw, mat2, metadata-cleaner, cryptsetup, bind9-dnsutils (dig); erase(Custom shred wrapper) |
 | desktop.list    | i3, lightdm, kitty, rofi, dunst, feh, xorg, network-manager-applet, firmware-linux/-realtek/-iwlwifi             |
-| useful.list     | gparted, tmux, git, python3-pip/-venv, build-essential, unzip                                                   |
+| useful.list     | gparted, tmux, git, python3-pip/-venv, build-essential, unzip, fastfetch, jq, golang-go, sqlite3                 |
 | included binary | [HTTPied](https://github.com/undecimodia59/HTTPied): native HTTP(S) interception and testing workspace, supplied as a prebuilt Linux x86_64 Trixie release |
+
+### Android reverse engineering
+
+[JADX](https://github.com/skylot/jadx) 1.5.6 provides APK/DEX-to-Java decompilation
+through `jadx` and the **JADX** application-menu entry (`jadx-gui`). Its official
+cross-platform release is SHA-256 verified during the build and installed under
+`/opt/jadx`, with commands on `$PATH`. The full Debian Java runtime is included
+for both CLI and GUI use. The hook checks both launchers' versions without
+opening the GUI.
+
+[Apktool](https://packages.debian.org/trixie/apktool) comes from Debian's archive
+and decodes Android resources and smali, then rebuilds modified projects:
+
+```sh
+jadx-gui ./app.apk
+jadx -d ./java-source ./app.apk
+apktool d ./app.apk -o ./decoded-app
+apktool b ./decoded-app -o ./rebuilt.apk
+```
+
+JADX produces reconstructed source, not necessarily buildable original code.
+Apktool rebuilding does not sign the resulting APK. Debian trixie's Apktool is
+2.7.0; newer Android resource formats may require a newer upstream release.
 
 ### [HTTPied](https://github.com/undecimodia59/HTTPied)
 
@@ -99,7 +122,7 @@ README and update `config/includes.chroot/usr/share/doc/httpied/SHA256SUMS`
   its packages trusts their privileged maintainer scripts as well.
 - VeraCrypt volumes: `sudo cryptsetup open --type tcrypt <container> <name>`.
 - Build-time downloads are pinned: rockyou (sha256), jwt_tool (commit plus clean
-  checkout), nuclei (sha256 plus version assertion), volatility3 and its base
+  checkout), nuclei and JADX (sha256 plus version assertions), volatility3 and its base
   dependency pefile (versions and wheel hashes). Nuclei is reverified and
   Volatility's venv is recreated whenever their build hooks run. Volatility uses
   wheels only and installs offline from verified downloads; optional extras are

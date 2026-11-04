@@ -1,0 +1,28 @@
+#!/bin/sh
+set -eu
+
+# Cross-platform CLI/GUI release, pinned independently of runtime downloads.
+JADX_VERSION="1.5.6"
+JADX_URL="https://github.com/skylot/jadx/releases/download/v${JADX_VERSION}/jadx-${JADX_VERSION}.zip"
+JADX_SHA256="545ea2be9c242511bc145755cf4bda2485ade42966e096f8b4d3da2a230e8974"
+JADX_TMP=$(mktemp -d)
+trap 'rm -rf "${JADX_TMP}"' EXIT
+trap 'exit 1' HUP INT TERM
+
+# Reverify and replace on every hook run; old jars must not survive upgrades.
+wget -q -O "${JADX_TMP}/jadx.zip" "${JADX_URL}"
+echo "${JADX_SHA256}  ${JADX_TMP}/jadx.zip" | sha256sum -c -
+mkdir "${JADX_TMP}/dist"
+unzip -q "${JADX_TMP}/jadx.zip" -d "${JADX_TMP}/dist"
+chmod 755 "${JADX_TMP}/dist/bin/jadx" "${JADX_TMP}/dist/bin/jadx-gui"
+
+# Validate the staged distribution before replacing the existing installation.
+"${JADX_TMP}/dist/bin/jadx" --version | grep -Fx "${JADX_VERSION}"
+"${JADX_TMP}/dist/bin/jadx-gui" --version | grep -Fx "${JADX_VERSION}"
+apktool --version
+
+rm -rf /opt/jadx
+mv "${JADX_TMP}/dist" /opt/jadx
+chown -R root:root /opt/jadx
+ln -sfn /opt/jadx/bin/jadx /usr/local/bin/jadx
+ln -sfn /opt/jadx/bin/jadx-gui /usr/local/bin/jadx-gui

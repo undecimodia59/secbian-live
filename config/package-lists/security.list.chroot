@@ -18,3 +18,7 @@ binwalk
 sleuthkit
 chkrootkit
 rkhunter
+
+# Android reverse engineering; full JRE also supports the JADX GUI.
+apktool
+default-jre
