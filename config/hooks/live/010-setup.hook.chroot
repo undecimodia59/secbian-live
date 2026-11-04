@@ -1,19 +1,25 @@
 #!/bin/sh
 set -e
 
-# Fail fast if the chroot package install stage was skipped (e.g. a stale
-# live-build stage marker left an empty chroot behind).
-if [ ! -x /usr/sbin/ufw ] || [ ! -x /usr/bin/i3 ] || [ ! -x /usr/sbin/lightdm ]
+# Report all missing commands and the actual package state, rather than infer
+# the cause from one missing executable. Never configure a partial live image.
+_MISSING=0
+for _REQUIRED in ufw:ufw i3:i3-wm lightdm:lightdm shred:coreutils
+do
+	_COMMAND=${_REQUIRED%%:*}
+	_PACKAGE=${_REQUIRED#*:}
+	if ! command -v "${_COMMAND}" >/dev/null 2>&1
+	then
+		echo "ERROR: required command missing from PATH: ${_COMMAND} (package: ${_PACKAGE})" >&2
+		dpkg-query -W -f='  ${binary:Package}: ${Status}\n' "${_PACKAGE}" >&2 || true
+		_MISSING=1
+	fi
+done
+if [ "${_MISSING}" != 0 ]
 then
-	echo "ERROR: expected packages are missing from the chroot - the package install stage was skipped." >&2
-	echo "       Fix: sudo lb clean --stage --chroot && lb config && sudo lb build" >&2
-	exit 1
-fi
-
-# GNU shred is supplied by Debian's essential coreutils package (no separate
-# shred package is needed). Fail the build if erase's backend is missing.
-if ! command -v shred >/dev/null 2>&1; then
-	echo "ERROR: shred is missing; restore the coreutils package and rebuild." >&2
+	echo "PATH=${PATH}" >&2
+	echo "Cannot configure the image without these tools. If package installation was skipped," >&2
+	echo "the stage markers may not match the chroot. On the builder run: sudo ./scripts/build-live.sh" >&2
 	exit 1
 fi
 

@@ -6,8 +6,7 @@ Amnesic, hardened, security/privacy-focused Debian Live (trixie, i3) built with 
 
 ```sh
 sudo apt install -y live-build cryptsetup-bin
-sudo lb config
-sudo lb build
+sudo ./scripts/build-live.sh
 ```
 
 `cryptsetup-bin` supplies the host's `veritysetup`: this live-build version calls
@@ -19,17 +18,25 @@ memtest86+, ...) are pulled automatically into the build chroot
 
 Signed UEFI shim/GRUB packages are required: the build fails rather than silently
 falling back to unsigned UEFI loaders. Legacy BIOS boot is still included.
-After changing this configuration, rebuild from a clean chroot so cached stages
-cannot retain old settings:
+The build script checks prerequisites and HTTPied's checksum, then runs these
+commands in order:
 
 ```sh
-sudo lb clean --purge
+sudo lb clean
 sudo lb config
 sudo lb build
 ```
 
-This removes existing live-build build state and caches; keep any needed build
-artifacts separately first.
+This removes the generated chroot, stage markers and image outputs together,
+while preserving download caches. Keep any previous images you need elsewhere.
+Use this path after configuration/package changes or when a resumed build skips
+package installation despite missing packages. Repeating `lb build` cannot repair
+that mismatch by itself. `lb clean --purge` additionally deletes caches and is
+not normally necessary for this recovery.
+
+When syncing between machines, transfer the complete source checkout but exclude
+`.build/`, `chroot/`, `binary/` and `cache/`; generated build state belongs to its
+builder. In particular, stage markers must not be paired with a different chroot.
 
 ## Hardened by default
 
