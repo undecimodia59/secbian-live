@@ -4,22 +4,34 @@ set -e
 # The live-build include copy stage (chroot_includes_after_packages) is skipped
 # when its stage marker (.build/chroot_includes_after_packages) survives a
 # chroot rebuild - which silently leaves the image without any of our
-# configuration (Mullvad keyring, USBGuard policy, journald, skel, ...).
+# configuration (USBGuard policy, journald, skel, ...).
 #
 # During the hook stage live-build bind-mounts the build config read-only into
 # the chroot at /live-build/config, so we can (re)apply the includes here and
 # then verify that everything actually landed.
 
-_SRC="/live-build/config/includes.chroot_after_packages"
-[ -d "${_SRC}" ] || _SRC="/live-build/config/includes.chroot"
+# Both directories may exist, including an empty after-packages directory.
+# Apply the base first; after-packages entries may then override individual files.
+_COPIED=false
+for _SRC in \
+	/live-build/config/includes.chroot \
+	/live-build/config/includes.chroot_after_packages
+do
+	if [ -d "${_SRC}" ]
+	then
+		cp -a "${_SRC}/." /
+		_COPIED=true
+	fi
+done
 
-if [ -d "${_SRC}" ]
+if [ "${_COPIED}" != true ]
 then
-	cp -a "${_SRC}/." /
+	echo "ERROR: no include directories are accessible under /live-build/config." >&2
+	exit 1
 fi
 
+_MISSING=0
 for _FILE in \
-	/usr/share/keyrings/mullvad-keyring.asc \
 	/etc/lightdm/lightdm.conf.d/99-secbian.conf \
 	/etc/NetworkManager/conf.d/00-macrandomize.conf \
 	/etc/skel/.config/i3/config \
@@ -44,9 +56,23 @@ do
 	if [ ! -e "${_FILE}" ]
 	then
 		echo "ERROR: include missing from the image: ${_FILE}" >&2
-		echo "       Check that the file exists under config/includes.chroot and was committed/transferred." >&2
-		echo "       If the source files are present, clear stale build stages and rebuild with:" >&2
-		echo "         lb clean --stage --chroot && lb config && lb build" >&2
-		exit 1
+		_MISSING=1
 	fi
 done
+
+if [ "${_MISSING}" != 0 ]
+then
+	echo "Check that the listed files exist in config/includes.chroot or config/includes.chroot_after_packages" >&2
+	echo "and were committed/transferred to the build machine." >&2
+	exit 1
+fi
+
+# live-build imports this key from config/archives before package installation.
+# The final-image .binary key is installed later, so do not require it here.
+# /usr/share/keyrings/mullvad-keyring.asc is not used by either APT entry.
+if [ ! -s /etc/apt/trusted.gpg.d/mullvad.key.chroot.asc ]
+then
+	echo "ERROR: Mullvad chroot APT key missing: /etc/apt/trusted.gpg.d/mullvad.key.chroot.asc" >&2
+	echo "Check config/archives/mullvad.key.chroot and live-build's archive setup stage." >&2
+	exit 1
+fi
