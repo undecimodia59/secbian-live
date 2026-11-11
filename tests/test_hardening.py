@@ -35,7 +35,7 @@ class HostnameTests(unittest.TestCase):
         (self.root / "etc/hosts").write_text(hosts)
         setter = Mock()
         name = self.script.configure(self.root, setter)
-        self.assertRegex(name, r"^sec-[0-9a-f]{8}$")
+        self.assertRegex(name, r"^[0-9a-f]{8}$")
         setter.assert_called_once_with(name.encode("ascii"))
         self.assertEqual((self.root / "etc/hostname").read_text(), name + "\n")
         return name, (self.root / "etc/hosts").read_text()

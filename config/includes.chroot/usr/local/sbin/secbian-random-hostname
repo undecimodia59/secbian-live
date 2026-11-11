@@ -16,7 +16,7 @@ def update_hosts(text, hostname):
 
 
 def configure(root=Path("/"), set_hostname=socket.sethostname):
-    hostname = "sec-" + secrets.token_hex(4)
+    hostname = secrets.token_hex(4)
     hosts = root / "etc/hosts"
     contents = update_hosts(hosts.read_text(), hostname)
     (root / "etc/hostname").write_text(hostname + "\n")
