@@ -56,7 +56,7 @@ builder. In particular, stage markers must not be paired with a different chroot
 |-----------------|-----------------------------------------------------------------------------------------------------------------|
 | security.list   | nmap, wireshark, aircrack-ng, john, hashcat, hydra, sqlmap, gobuster, ffuf, nikto, netcat, tcpdump, ettercap, dsniff, foremost, testdisk, binwalk, sleuthkit, chkrootkit, rkhunter, apktool, Java runtime (+ nuclei, volatility3 & JADX via pinned hooks) |
 | privacy.list    | mullvad-browser, mullvad-vpn, tor, torsocks, nyx, obfs4proxy, firejail, apparmor stack, usbguard, ufw, mat2, metadata-cleaner, cryptsetup, bind9-dnsutils (dig); erase(Custom shred wrapper) |
-| desktop.list    | i3, lightdm, kitty, rofi, dunst, feh, xorg, network-manager-applet, firmware-linux/-realtek/-iwlwifi             |
+| desktop.list    | i3, lightdm, kitty, rofi, dunst, feh, xorg, network-manager-applet, firmware-linux/-realtek/-iwlwifi, chromium (HTTPied dependency) |
 | useful.list     | gparted, tmux, git, python3-pip/-venv, build-essential, unzip, fastfetch, jq, golang-go, sqlite3                 |
 | included binary | [HTTPied](https://github.com/undecimodia59/HTTPied): native HTTP(S) interception and testing workspace, supplied as a prebuilt Linux x86_64 Trixie release |
 
@@ -102,8 +102,8 @@ httpied --headless --listen 127.0.0.1:8080
 
 The desktop supports HTTPS interception and automatically installs the opened
 project's public CA into the current user's Chromium NSS store. `libnss3-tools`
-and the X11/Wayland/OpenGL runtime libraries are included. **Open browser** needs
-a separately installed Chromium/Chrome browser; Mullvad Browser is not Chromium.
+and the X11/Wayland/OpenGL runtime libraries are included. Chromium (HTTPied dependency)
+is included for **Open browser**; Mullvad Browser is not Chromium.
 Other certificate stores need manual public-CA import and browser proxy setup.
 Keep the project's private `ca.key.pem` private. Full usage documentation is
 included at `/usr/share/doc/httpied/README.md`.

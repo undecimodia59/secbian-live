@@ -34,6 +34,7 @@ qt6-gtk-platformtheme
 librsvg2-bin
 
 # HTTPied desktop runtime and NSS certificate setup helper.
+chromium
 libx11-6
 libxi6
 libxcursor1
